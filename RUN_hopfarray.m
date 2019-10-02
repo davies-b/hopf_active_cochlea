@@ -1,7 +1,7 @@
 % RUN_    .m
 %
 % Computes the resonant frequencies and associated eigenmodes for an array
-% of N bubbles graded in size with size factor s using the multipole
+% of N resonators graded in size with size factor s using the multipole
 % method, then studies the response as a function of the input frequency,
 % for different forcing amplitudes.
 %
@@ -9,7 +9,7 @@
 %
 % Davies, B
 %
-% Used to create...
+% Used to create Figures 3-7 of Ammari & Davies, 2019
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all, close all
