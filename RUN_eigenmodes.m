@@ -120,6 +120,9 @@ end
 
 % return
 %% Computing eigenmodes along x2 axis
+clf
+modes = zeros(1,N);
+modes(8) = 1; modes(15) = 1;        % pick which modes to compare
 
 Vol = pi*R.^2;
 N_res = length(resonances);
@@ -127,6 +130,7 @@ N_res = length(resonances);
 % Grid for field
 gridN = max(N*10+1,50);         
 gridMinX1 = -0.03+R(1);
+gridMinX1 = 0;
 gridMaxX1 = cx(end)+R(end)+0.03;
 g1 = linspace(gridMinX1, gridMaxX1, gridN);
 g2 = 0;
@@ -195,33 +199,6 @@ end
 
 
 
-% % normalisation
-% avg_val = zeros(N,1);
-% total_number = 0;
-% for i = 1:N
-%     I = (u_b(:,2) == i);
-%     total_vals = sum(u_b(I,1));
-%     number = sum(I);
-%     total_number = total_number + number;
-%     avg_val(i) = total_vals/number;
-% end
-% 
-% norm_u = dot(Vol,avg_val.*conj(avg_val));
-% norm_u = sqrt(norm_u);
-% 
-% u_store(:,m) = u/norm_u;
-% ub_store(:,m) = u_b(:,1)/norm_u;
-% vals_store(:,m) = avg_val/norm_u;
-
-% plotting
-% uTotal = reshape(u, [gridN gridN]);
-% hFig = figure(m+1);
-% set(hFig, 'Position', [100 100 1200 900]);
-% surf(g1, g2, real(uTotal), 'edgecolor', 'none'); xlabel('x_1'); ylabel('x_2'); title(['u_' num2str(m)])
-% axis([gridMinX1, gridMaxX1, gridMinX2, gridMaxX2, min(real(uTotal(:))), max(real(uTotal(:))) ]); rotate3d on;
-
-% subplot(5,2,m)
-% subplot(4,3,m)
 subplot(8,3,m+2)
 plot(g1,real(u),'k')
 hold on
@@ -230,23 +207,36 @@ xlim([-0.01,0.045])
 ylim(max(abs(ylim)).*[-1 1])
 box off
 set(gca,'visible','off')
-% if m > 1
-    text(0.036,0.8*max(abs(ylim)),[num2str(real(resonances(m)/2/pi),'%.0f'),' Hz'],'interpreter','latex')
-% else
-%     text(0.036,0.2*max(abs(ylim)),[num2str(real(resonances(m)/2/pi),'%.0f'),' Hz'],'interpreter','latex')
-%     plot([0,0.035],[0.8*max(abs(ylim)),0.8*max(abs(ylim))],'k-+')
-%     text(0.012,max(abs(ylim)),'3.5 cm','interpreter','latex')
-% end
+text(0.038,0.5*max(abs(ylim)), [num2str(real(resonances(m)/2/pi),'%.0f'),' Hz'],'interpreter','latex')
+
 end
 
 
-subplot(8,3,[1.2,2])
+subplot(10,3,[1.2,2])
 scatter(real(resonances)*10^-3/2/pi,imag(resonances)*10^-3/2/pi,'kx')
 x = xlabel('Re $\omega/2\pi$ ($\times 10^3$)','interpreter','latex');
 ylabel('Im $\omega/2\pi$ ($\times 10^3$)','interpreter','latex')
 set(gca, 'XAxisLocation', 'top')
-% set(x, 'position', get(x,'position')+[0,0,0]);
 set(gca, 'ticklabelinterpreter','latex')
+
+
+%%
+clf
+omeg_vals = [1000, 2000, 7000, 18000];
+x = linspace(0,L,200);
+for n = 1:length(omeg_vals)
+    omeg = omeg_vals(n);
+    p = membrane(x,omeg);
+    subplot(2,ceil(length(omeg_vals)/2),n)
+    plot(x,p,'k')
+    hold on
+    plot([g1(1),g1(end)],[0,0],'k:')
+    xlim([0,L])
+    ylim(max(abs(ylim)).*[-1 1])
+    box off
+    set(gca,'visible','off')
+    text(0.028,0.5*max(abs(ylim)), [num2str(omeg),' Hz'],'interpreter','latex')
+end
 
 
 

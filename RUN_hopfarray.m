@@ -355,10 +355,10 @@ plot(omeg_vals/sqrt(real(res)^2-imag(res)^2),(soln)*10^6,'k')
 xlim([0.8,1.2])
 set(gca,'TickLabelInterpreter','latex')
 xlabel(['$\Omega/\Omega_{',num2str(k),'}^c$'],'FontSize',12,'interpreter','latex')
-ylabel(['$X_{',num2str(k),'}$ ($\mu$Pa)'],'FontSize',12,'interpreter','latex')
+ylabel(['$R_{',num2str(k),'}$ ($\mu$Pa)'],'FontSize',12,'interpreter','latex')
 
 
-
+return
 %% Fully-coupled modal system
 beta = 1e1;
 figure
@@ -431,3 +431,5 @@ scatter(omeg_vals/2/pi*10^-3,-cycles/2/pi,1,'k')
 xlabel('Forcing frequency $\Omega/2\pi$ (kHz)','interpreter','latex')
 ylabel('Phase delay (cycles)','interpreter','latex')
 xlim([0,max(omeg_vals)/2/pi*10^-3])
+set(gca,'TickLabelInterpreter','latex')
+
