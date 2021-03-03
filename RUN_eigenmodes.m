@@ -22,10 +22,6 @@ L_end = L;
 s = 1.05;
 a = 0.0001;
 
-% Rad = L_end*(1-s)/(1-s^N)/3;
-% for i = 1:N
-%     R(i) = Rad*s^(i-1);
-% end
 for i = 1:N
     R(i) = a*s^(i-1);
 end
@@ -44,12 +40,7 @@ v_b = sqrt(kappa_b/rho_b);  % speed of sound in air
 % High contrast parameter \delta
 delta=rho_b/rho0;
 
-% cx = 2*R(1)*ones(1,N);
-% if N > 1
-%     for i = 2:N
-%         cx(i) = cx(i-1) + 2*R(i-1) + R(i);
-%     end
-% end
+% Define the position of the centres of the resonators
 cx = linspace(0,L,N+2);
 cx = cx(2:end-1);
 cy = zeros(1,N);
@@ -59,16 +50,15 @@ cy = zeros(1,N);
 % If we use higher order, then accuracy improves. Usually 3 is sufficient.
 N_multi = 3;
 
-% %%% Plot the geometry
-% figure, hold on
-% t = linspace(0,2*pi);
-% for n = 1:length(R)
-%     plot(cx(n)+R(n)*cos(t), cy(n)+R(n)*sin(t),'k')
-% end
-% daspect([1 1 1])
-% hold off
-% 
-% return
+%%% Plot the geometry
+figure, hold on
+t = linspace(0,2*pi);
+for n = 1:length(R)
+    plot(cx(n)+R(n)*cos(t), cy(n)+R(n)*sin(t),'k')
+end
+daspect([1 1 1])
+hold off
+
 
 %% Compute initial guesses for the resonances
 %
@@ -79,17 +69,15 @@ f= @(z) min(eig((MakeA(R,z,rho0,rho_b,kappa0,kappa_b,delta,N_multi,cx,cy))));
 
 x = linspace(1, 2*pi*22000, 200);
 init = [];
-% for correction = 0%[1i 10i 200i 300i]
-    y = zeros(1, length(x));
-    for i = 1:length(x)
-        y(i) = abs(f(x(i)));
+y = zeros(1, length(x));
+for i = 1:length(x)
+    y(i) = abs(f(x(i)));
+end
+for i = 2:length(x)-1
+    if y(i)<y(i-1) & y(i)<y(i+1) & (isempty(init) || min(abs(init-x(i)*ones(1,length(init)))) > 1e0)
+        init = [init x(i)];
     end
-    for i = 2:length(x)-1
-        if y(i)<y(i-1) & y(i)<y(i+1) & (isempty(init) || min(abs(init-x(i)*ones(1,length(init)))) > 1e0)
-            init = [init x(i)];
-        end
-    end
-% end
+end
 
 if length(init) < length(R)
     disp('WARNING: fewer than N initial guesses created')
@@ -115,15 +103,11 @@ for initGuess = init
        n = n + 1;
     end
 end
-% clf
+% figure
 % scatter(real(resonances), imag(resonances), 'x')
 
-% return
 %% Computing eigenmodes along x2 axis
-clf
-modes = zeros(1,N);
-modes(8) = 1; modes(15) = 1;        % pick which modes to compare
-
+figure
 Vol = pi*R.^2;
 N_res = length(resonances);
 
@@ -134,9 +118,7 @@ gridMinX1 = 0;
 gridMaxX1 = cx(end)+R(end)+0.03;
 g1 = linspace(gridMinX1, gridMaxX1, gridN);
 g2 = 0;
-% Dx = (gridMaxX1 - gridMinX1)/(gridN - 1);
-% Dy = (gridMaxX2 - gridMinX2)/(gridN - 1);
-% DA = Dx*Dy;
+
 [ g1, g2 ] = meshgrid(g1, g2);
 gridPoints = [g1(:) g2(:)]';
 
@@ -220,8 +202,9 @@ set(gca, 'XAxisLocation', 'top')
 set(gca, 'ticklabelinterpreter','latex')
 
 
-%%
-clf
+%% Plot the membrane eigenmodes for comparison
+figure
+
 omeg_vals = [1000, 2000, 7000, 18000];
 x = linspace(0,L,200);
 for n = 1:length(omeg_vals)
@@ -237,6 +220,4 @@ for n = 1:length(omeg_vals)
     set(gca,'visible','off')
     text(0.028,0.5*max(abs(ylim)), [num2str(omeg),' Hz'],'interpreter','latex')
 end
-
-
 
