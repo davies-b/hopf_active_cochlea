@@ -26,8 +26,6 @@ for i = 1:N
     R(i) = a*s^(i-1);
 end
 
-% source = [-0.01, 0];             % location of the signal source
-
 %%% Material parameters
 rho0 = 1e3;                 % density of water
 kappa0 = 2e9;               % bulk modulus of water
